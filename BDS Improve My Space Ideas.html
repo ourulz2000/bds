@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BDS Space Improvement Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* BDS brand: charcoal bar, shield logo, wide-tracked uppercase type, slate links. Single light theme to match bdsdesignbuildremodel.com */
+:root{
+  color-scheme:light;
+  --charcoal:#2E3035; --shield:#E4E4E4; --slate:#7D94A2; --slate-dk:#5E7684;
+  --bg:#FFFFFF; --surface:#FFFFFF; --sunk:#F3F4F4;
+  --ink:#2E3035; --muted:#686B70; --line:#DCDDDF;
+  --lake:#2E3035; --lake-hi:#1E2024; --lake-soft:#EEF0F1; --on-lake:#FFFFFF;
+  --oak:#6F8795; --oak-soft:#E6EDF1;
+  --good:#4E6E5B; --warn-bg:#F3F4F4; --warn-ink:#55585D;
+  --water:#DCE4E9; --water-ink:#7D94A2; --land:#F4F4F3; --town:#E3E4E4; --town-edge:#FFFFFF; --town-ink:#86898E;
+  --display:"Montserrat","Proxima Nova","Helvetica Neue",Arial,sans-serif;
+  --body:"Montserrat","Proxima Nova","Helvetica Neue",Arial,sans-serif;
+  --mono:"Montserrat","Proxima Nova","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 56px}
+a{color:var(--slate-dk)}
+
+.site{margin:0 -16px;position:relative;z-index:2}
+.bar{background:var(--charcoal);height:92px;display:flex;align-items:center;justify-content:center;gap:0;padding-inline:16px}
+.bar ul{list-style:none;margin:0;padding:0;display:flex;align-items:center;flex:1}
+.bar ul.l{justify-content:flex-end;padding-right:120px}
+.bar ul.r{justify-content:flex-start;padding-left:120px}
+.bar li{display:flex;align-items:center}
+.bar li+li::before{content:"•";color:#C9CACC;font-size:10px;margin-inline:16px}
+.bar a{color:#EDEDED;text-decoration:none;font:400 14px/1 var(--display);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.bar a:hover{color:#FFFFFF}
+.bar a.cta{color:#A9B9C3}
+.bar a:focus-visible{outline:2px solid #A9B9C3;outline-offset:4px}
+.logo{position:absolute;left:50%;top:0;transform:translateX(-50%);width:184px;line-height:0}
+.logo img{width:100%;height:auto;display:block}
+.banner{margin:0 -16px;position:relative;min-height:300px;display:flex;align-items:flex-end;justify-content:center;padding:150px 16px 44px;background:#6f6a66 center/cover no-repeat;background-image:linear-gradient(rgba(46,48,53,.45),rgba(46,48,53,.55)),var(--hero)}
+.banner h1{color:#F2F2F2;font:300 clamp(26px,4.4vw,48px)/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.35);margin:0}
+@media (max-width:1060px){
+  .bar ul{display:none}
+  .bar{height:64px}
+  .logo{width:124px}
+  .banner{min-height:230px;padding-top:120px}
+}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:.08em;text-transform:uppercase}
+.proto{margin:0 -16px;padding:8px 16px;background:var(--sunk);color:var(--muted);font-size:12.5px;text-align:center;border-bottom:1px solid var(--line)}
+.intro{padding-block:44px 28px;display:grid;gap:10px;max-width:820px}
+.eyebrow{font:600 12px/1 var(--display);letter-spacing:.22em;text-transform:uppercase;color:var(--slate-dk)}
+.intro h2{font-weight:400;font-size:clamp(24px,3.4vw,40px);line-height:1.2;letter-spacing:.1em}
+.intro p{margin:0;color:var(--muted);font-size:17px;max-width:62ch}
+
+.grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:920px){.grid{grid-template-columns:1fr}}
+.pickers{display:grid;gap:26px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (max-width:920px){.pickers{position:static}}
+.step{display:grid;gap:12px}
+.step-h{display:flex;gap:10px;align-items:baseline}
+.step-n{font:700 12px/1 var(--display);letter-spacing:.18em;color:var(--slate)}
+.step h3{font-weight:800;font-size:14.5px;letter-spacing:.14em}
+.hint{margin:0;color:var(--muted);font-size:14px}
+
+.spaces{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.space{position:relative}
+.space input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.space span{display:grid;gap:6px;justify-items:start;padding:12px;border:1px solid var(--line);border-radius:2px;background:var(--surface);font:700 14px/1.2 var(--display);height:100%}
+.space svg{width:24px;height:24px;stroke:var(--slate-dk);fill:none;stroke-width:1.5}
+.space input:checked+span{border-color:var(--charcoal);background:var(--lake-soft);box-shadow:inset 0 0 0 1px var(--charcoal)}
+.space input:focus-visible+span{outline:2px solid var(--slate);outline-offset:2px}
+
+.symptoms{display:grid;gap:8px}
+.sym{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:2px;background:var(--surface);cursor:pointer;font-size:15px;line-height:1.4}
+.sym input{margin-top:3px;width:17px;height:17px;accent-color:var(--charcoal);flex:none}
+.sym:has(input:checked){border-color:var(--charcoal);background:var(--lake-soft)}
+.sym:has(input:focus-visible){outline:2px solid var(--slate);outline-offset:2px}
+
+.results{display:grid;gap:18px}
+.summary{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.summary h2{font-weight:300;font-size:clamp(22px,2.6vw,30px);letter-spacing:.12em}
+.summary p{margin:0;color:var(--muted);font-size:14.5px}
+.empty{padding:28px;border:1px dashed var(--line);color:var(--muted);text-align:center}
+
+.dx{border:1px solid var(--line);border-radius:2px;background:var(--surface);display:grid}
+.dx-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:16px 18px 0}
+.dx-top h3{font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:none;line-height:1.35}
+.tag{font:700 10.5px/1 var(--display);letter-spacing:.16em;text-transform:uppercase;padding:6px 9px;border-radius:999px;white-space:nowrap}
+.tag.soon{background:#F6E7E2;color:#8A3B26}
+.tag.plan{background:var(--oak-soft);color:var(--slate-dk)}
+.dx-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 18px 16px}
+@media (max-width:640px){.dx-body{grid-template-columns:1fr}}
+.dx-body b{display:block;font:700 11px/1.3 var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--slate-dk);margin-bottom:4px}
+.dx-body p{margin:0;font-size:14.5px;line-height:1.6}
+.dx-proj{border-top:1px solid var(--line);padding:12px 18px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;background:var(--sunk)}
+.dx-proj small{font:700 10.5px/1 var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.dx-proj a{font-weight:600;font-size:14px;color:var(--charcoal);text-decoration:none;border-bottom:1px solid var(--slate)}
+.dx-proj a:hover{color:var(--slate-dk)}
+
+.cta{background:var(--charcoal);color:#EDEDED;padding:24px;display:grid;gap:14px}
+.cta h3{color:#fff;font-weight:800;font-size:16px;letter-spacing:.14em}
+.cta p{margin:0;color:#C9CBCE;font-size:14.5px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fields .full{grid-column:1/-1}
+@media (max-width:640px){.fields{grid-template-columns:1fr}}
+.field{display:grid;gap:4px}
+.field label{font:700 11.5px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#D9DADC}
+.field input,.field select,.field textarea{font:inherit;font-size:15px;padding:10px;border:1px solid #55585E;border-radius:2px;background:#3A3D43;color:#fff;width:100%}
+.field textarea{min-height:84px;resize:vertical}
+.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{outline:2px solid var(--slate);outline-offset:1px}
+.btn{justify-self:start;font:600 14px/1 var(--display);letter-spacing:.16em;text-transform:uppercase;padding:16px 22px;border:0;border-radius:2px;background:#E4E4E4;color:var(--charcoal);cursor:pointer}
+.btn:hover{background:#fff}
+.btn:focus-visible{outline:2px solid var(--slate);outline-offset:2px}
+.err{margin:0;color:#F2B8B5;font-size:13.5px}
+.done b{display:block;color:#fff;font:700 16px/1.3 var(--display);margin-bottom:4px}
+
+/* GoDaddy embed */
+html,body{margin:0}
+body{padding-block:8px 32px}
+.intro{padding-block:12px 24px}
+.mark{width:84px;height:auto;display:block;margin-bottom:6px}
+.proto-end{margin:32px 0 0;border:0;border-top:1px solid var(--line);background:none;text-align:left;padding:12px 0 0}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <section class="intro">
+    <img class="mark" src="data:image/webp;base64,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" alt="BDS Design Build Remodel" width="84" height="92">
+    <span class="eyebrow">Not sure where to start?</span>
+    <h2>How Should I Improve My Space?</h2>
+    <p>Pick a room and check what's bothering you. We'll explain what's usually behind it, how BDS fixes it, and show you real projects where we solved the same problem.</p>
+  </section>
+
+  <div class="grid">
+    <form class="pickers" id="pick" novalidate>
+      <div class="step">
+        <div class="step-h"><span class="step-n">STEP 1</span><h3>Choose the space</h3></div>
+        <div class="spaces" id="spaces"></div>
+      </div>
+      <div class="step">
+        <div class="step-h"><span class="step-n">STEP 2</span><h3>What's bothering you?</h3></div>
+        <p class="hint">Check everything that applies.</p>
+        <div class="symptoms" id="symptoms"></div>
+      </div>
+    </form>
+
+    <section class="results" aria-live="polite">
+      <div class="summary"><h2 id="sumH"></h2><p id="sumP"></p></div>
+      <div id="dxList" class="results"></div>
+
+      <div class="cta">
+        <h3>Have BDS take a look</h3>
+        <p id="ctaP">Book an in-home consultation. We'll walk the space with you, confirm what's causing the problem, and talk through options and a target investment range.</p>
+        <form id="lead" novalidate>
+          <div class="fields">
+            <div class="field"><label for="fname">First name</label><input id="fname" autocomplete="given-name"></div>
+            <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"></div>
+            <div class="field"><label for="town">Town</label>
+              <select id="town"><option>Libertyville</option><option>Lake Forest</option><option>Lake Bluff</option><option>Highland Park</option><option>Glencoe</option><option>Winnetka</option><option>Kenilworth</option><option>Wilmette</option><option>Northbrook</option><option>Glenview</option><option>Park Ridge</option><option>Barrington</option><option>Other</option></select></div>
+            <div class="field full"><label for="notes">What we'll see when we visit</label><textarea id="notes"></textarea></div>
+          </div>
+          <p class="err" id="err" hidden>Add your first name and a valid email so we can reach you.</p>
+          <div style="margin-top:14px"><button class="btn" type="submit">Request a visit</button></div>
+        </form>
+        <div class="done" id="done" hidden><b id="doneMsg"></b>Demo only: nothing was sent. In the live version this creates a HubSpot contact with the space and issues already filled in.</div>
+      </div>
+    </section>
+  </div>
+  <div class="proto proto-end"><strong>Concept prototype</strong> prepared for BDS Design Build Remodel by Lighthouse Marketing. The form below does not send anything.</div>
+</div>
+
+<script>
+const SITE="https://www.bdsdesignbuildremodel.com/";
+const P=s=>SITE+"remodeling-portfolio/"+s, B=s=>SITE+"remodeling-blog/"+s;
+const ICON={
+ kitchen:'<svg viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="10" rx="1"/><path d="M3 14h18M8 10V4h8v6M10 17h4"/></svg>',
+ bath:'<svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5v-3zM6 12V5a2 2 0 0 1 4 0M7 20l-1 2M17 20l1 2"/></svg>',
+ basement:'<svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 9v11h14V9M5 15h14M9 15v5M9 20l3-3 3 3"/></svg>',
+ outdoor:'<svg viewBox="0 0 24 24"><path d="M3 9h18M5 9V6h14v3M6 9v11M18 9v11M3 20h18M9 14h6"/></svg>',
+ whole:'<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-5h4v5"/></svg>'
+};
+const SPACES={
+ kitchen:{label:"Kitchen",items:[
+  {id:"flow",q:"It looks nice, but it doesn't work for how we cook and entertain",u:"plan",
+   means:"Many kitchens were laid out for one cook. With two people cooking, kids at the island and guests arriving, the work zones overlap and the island ends up in the way.",
+   fix:"We redraw the kitchen around how you actually use it, with separate prep, cooking and cleanup zones, a right-sized island and seating that keeps guests out of the work path.",
+   proj:[["Kitchen Layout Ideas That Improve Functionality",B("kitchen-layout-ideas-that-improve-functionality")],["Kitchen Remodel with Hidden Pantry in Libertyville",P("kitchen-remodel-with-hidden-pantry-in-libertyville")]]},
+  {id:"hide",q:"When we host, there's nowhere to hide the mess",u:"plan",
+   means:"Open kitchens put every dish, small appliance and delivery box on display, which is the opposite of what you want with a house full of guests.",
+   fix:"A hidden pantry, butler's pantry or scullery, appliance garages and full-height storage so the main kitchen stays clean while the work happens out of sight.",
+   proj:[["A Kitchen Transformation with Hidden Storage & Structural Solutions",B("a-kitchen-transformation-that-blends-smart-design-hidden-storage-structural-solutions")],["Kitchen Remodel with Hidden Pantry in Libertyville",P("kitchen-remodel-with-hidden-pantry-in-libertyville")]]},
+  {id:"closed",q:"It's closed off from the family and dining rooms",u:"plan",
+   means:"In many North Shore homes the wall between the kitchen and living spaces is load-bearing, which is why owners often assume opening it up isn't possible.",
+   fix:"We engineer a beam, often steel, so the wall can come out and the kitchen, dining and family room work as one connected space.",
+   proj:[["Libertyville Kitchen, Dining, & Living Room Remodel",P("kitchen-dining-living-room-remodel-in-libertyville")],["Evanston Kitchen & Living Room Refresh",P("evanston-kitchen-living-room-refresh")]]},
+  {id:"grade",q:"It feels builder-grade compared to the rest of our home",u:"plan",
+   means:"Kitchens are often the one room where a home's original quality stopped, with stock cabinetry, basic lighting and finishes that don't match the millwork elsewhere.",
+   fix:"Custom cabinetry, natural stone, layered lighting and details that carry the character of the rest of the house into the kitchen.",
+   proj:[["Glenview Kitchen Remodel",P("glenview-kitchen-remodel")],["Highland Park Kitchen and Laundry Room Remodel",P("kitchen-and-laundry-room-remodel-in-highland-park")]]},
+  {id:"prior",q:"A previous renovation left structural compromises",u:"soon",
+   means:"Earlier work by a prior owner sometimes removed support without the right beam, or covered up problems that are now showing as uneven floors or cracks.",
+   fix:"We find and correct the structural issue first, then design the new kitchen around a sound base so the problem doesn't come back.",
+   proj:[["A Kitchen Transformation with Hidden Storage & Structural Solutions",B("a-kitchen-transformation-that-blends-smart-design-hidden-storage-structural-solutions")]]}
+ ]},
+ bath:{label:"Bathroom",items:[
+  {id:"retreat",q:"Our primary bath doesn't feel like a retreat",u:"plan",
+   means:"Many primary baths were designed to be functional, not restful. Tight showers, dated lighting and a single vanity make the start and end of every day feel rushed.",
+   fix:"A spa-level redesign with a larger walk-in or steam shower, heated floors, separate vanities, soft layered lighting and natural stone.",
+   proj:[["Winnetka Primary Bathroom Remodel",P("primary-bathroom-remodel-winnetka")],["From Outdated to Tranquil Retreat",B("from-outdated-to-tranquil-retreat-a-complete-bathroom-transformation")]]},
+  {id:"tub",q:"A tub we never use takes up room the shower needs",u:"plan",
+   means:"Primary baths from past decades were built around a large drop-in tub, and the shower got whatever space was left.",
+   fix:"Give the space to a generous walk-in or curbless shower, and add a freestanding soaking tub only if you'll truly use it.",
+   proj:[["Libertyville Updated Primary Bathroom",P("updated-primary-bathroom-libertyville")],["Lake Forest Remodeled Bathroom",P("lake-forest-remodeled-bathroom")]]},
+  {id:"closet",q:"The primary suite is short on closet and dressing space",u:"plan",
+   means:"Bath and closet were often designed as separate afterthoughts, leaving two people sharing one small closet.",
+   fix:"We rework the bath, closet and dressing area together, sometimes borrowing space from an adjoining room, to create a true primary suite.",
+   proj:[["Primary Bath & Closet in Libertyville",P("primary-bath-closet-in-libertyville")],["Master Suite and Bathroom Renovation in Highland Park",P("primary-suite-and-bathroom-renovation-in-highland-park")]]},
+  {id:"leak",q:"A shower leak keeps coming back no matter what we patch",u:"soon",
+   means:"When a leak returns after regrouting or resealing, the waterproofing behind the tile has usually failed, and the damage keeps spreading out of sight.",
+   fix:"We take the shower down to the framing, repair what's behind it, and rebuild with a modern waterproofing system before any tile goes back up.",
+   proj:[["From Outdated to Tranquil Retreat (Buffalo Grove)",B("from-outdated-to-tranquil-retreat-a-complete-bathroom-transformation")],["Buffalo Grove Bathroom Renovation",P("buffalo-grove-bathroom-remodel")]]},
+  {id:"cold",q:"It feels cold and uninviting",u:"plan",
+   means:"Stone and tile over unheated space, an exterior wall without enough insulation, and cool lighting all make a bathroom feel colder than the rest of the house.",
+   fix:"Radiant heated floors, better insulation and warmer materials and lighting so the room is comfortable year-round.",
+   proj:[["A Fresh Finish: Transforming a Cold, Outdated Bathroom in Grayslake",B("a-fresh-finish-transforming-a-cold-outdated-bathroom-in-grayslake")],["Grayslake Bathroom Remodel",P("grayslake-bathroom-renovation")]]},
+  {id:"guest",q:"The guest bath or powder room doesn't match the rest of the home",u:"plan",
+   means:"Guest baths are often the last rooms updated, yet they're the ones visitors remember.",
+   fix:"A focused remodel with a statement vanity, lighting and wallcovering, usually on a shorter timeline than a primary bath.",
+   proj:[["Creating the Perfect Guest Bathroom",B("creating-the-perfect-guest-bathroom")],["Northbrook Primary Bathroom & Powder Room",P("northbrook-primary-bathroom-powder-room")]]}
+ ]},
+ basement:{label:"Basement",items:[
+  {id:"dated",q:"It was finished years ago and nobody goes down there",u:"plan",
+   means:"Many lower levels were finished in the '90s or 2000s with a layout and finishes that no longer fit the family or the rest of the home.",
+   fix:"We reimagine the whole level with a new plan, lighting and finishes that match the main floor, so it becomes part of daily life again.",
+   proj:[["Reimagined Basement Remodel in Libertyville",P("reimagined-basement-remodel-in-libertyville")],["Winnetka Basement Remodel",P("winnetka-basement-remodel")]]},
+  {id:"dark",q:"It's dark and feels like a storage area",u:"plan",
+   means:"Small windows, low ceilings and a single row of fixtures make a lower level feel like the leftover part of the house.",
+   fix:"A lighting plan, larger or new egress windows, lighter finishes and careful soffit design so ductwork doesn't eat the ceiling.",
+   proj:[["Libertyville Finished Basement: From Dark Storage Area to a Bright Family Retreat",B("libertyville-finished-basement-remodel-from-dark-storage-area-to-a-bright-family-retreat")]]},
+  {id:"ent",q:"We want a true entertaining level",u:"plan",
+   means:"Hosting on the main floor puts the whole house on display. A lower level built for gatherings takes the pressure off.",
+   fix:"Zoned space for a lounge, bar, game area and seating, designed so the room works for a family movie night or a party of forty.",
+   proj:[["Designing the Ultimate Basement Entertainment Space",B("designing-the-ultimate-basement-entertainment-space")],["A Northbrook Basement Remodel for Entertaining",P("northbrook-basement-remodel")]]},
+  {id:"theater",q:"We'd love a theater, bar or wine room",u:"plan",
+   means:"These rooms need planning for sound, wiring, plumbing and climate control before any walls go up.",
+   fix:"Dedicated rooms with acoustic treatment, AV prewiring, bar plumbing and climate-controlled wine storage.",
+   proj:[["Winnetka Theater Room Remodel",P("home-theater-remodel-winnetka")],["Pool Room Conversion Park Ridge",P("pool-room-conversion-park-ridge")]]},
+  {id:"gym",q:"We want a home gym or studio",u:"plan",
+   means:"Workout and studio spaces need the right flooring, ceiling height, mirrors, ventilation and sound control to feel like a real studio.",
+   fix:"A purpose-built room with rubber or sprung flooring, mirror walls, good airflow and sound isolation from the rest of the house.",
+   proj:[["Dance Room Remodel in Northbrook",P("dance-room-remodel-in-northbrook")]]},
+  {id:"guests",q:"We need a proper suite for guests or family",u:"plan",
+   means:"A basement bedroom needs code-compliant egress, and a bathroom below the sewer line may need an ejector pump.",
+   fix:"A private guest suite with an egress window, full bath and closet, finished to the same standard as upstairs.",
+   proj:[["Beautiful Basement Remodel in Libertyville",P("beautiful-basement-remodel-in-libertyville")]]}
+ ]},
+ outdoor:{label:"Patio & outdoor",items:[
+  {id:"season",q:"We only use our outdoor space a few months a year",u:"plan",
+   means:"Without shade, wind protection or heat, a patio is only comfortable in a narrow slice of a Chicago year.",
+   fix:"A pergola or covered structure, heaters and lighting to stretch the outdoor season well into fall.",
+   proj:[["Problem Patio to Year-Round Outdoor Living: A Lake Forest Transformation",B("problem-patio-to-year-round-outdoor-living-a-lake-forest-transformation")]]},
+  {id:"cook",q:"There's no real place to cook and gather outside",u:"plan",
+   means:"A grill at the edge of the patio keeps the cook apart from everyone else.",
+   fix:"An outdoor kitchen with counter space, storage and seating planned together, so the patio works like a second living room.",
+   proj:[["Lake Forest Patio Remodel",P("lake-forest-patio-remodel")]]},
+  {id:"match",q:"The outdoor space doesn't match the quality of the home",u:"plan",
+   means:"Patios are often built quickly with a new home and never revisited, even as the interior is remodeled.",
+   fix:"We design the outdoor space as an extension of the house, with materials, lighting and layout that carry the interior's style outside.",
+   proj:[["Lake Forest Patio Remodel",P("lake-forest-patio-remodel")]]},
+  {id:"drain",q:"Water pools on the patio or runs toward the house",u:"soon",
+   means:"A patio that has settled or was pitched the wrong way sends water toward the foundation.",
+   fix:"We rebuild with the right slope and drainage so water moves away from the home, as part of the new design.",
+   proj:[["Problem Patio to Year-Round Outdoor Living: A Lake Forest Transformation",B("problem-patio-to-year-round-outdoor-living-a-lake-forest-transformation")]]}
+ ]},
+ whole:{label:"Whole home",items:[
+  {id:"choppy",q:"We have formal rooms we never use",u:"plan",
+   means:"Many homes were designed around formal living and dining rooms that don't match how families live and entertain today.",
+   fix:"We rethink the floor plan as a whole, opening or repurposing rooms so every square foot earns its place.",
+   proj:[["Whole Home Remodel in Libertyville",P("whole-home-remodel-in-libertyville")],["Interior Renovations in Glencoe",P("interior-renovations-in-glencoe")]]},
+  {id:"outgrow",q:"We need more space, but we love our neighborhood",u:"plan",
+   means:"On the North Shore, moving often costs more than adding on, and it means leaving schools and neighbors you chose on purpose.",
+   fix:"An addition such as a primary suite, family room or larger kitchen, designed to look like it was always part of the house.",
+   proj:[["New Primary Suite Home Addition in Libertyville",P("new-primary-suite-home-addition-in-libertyville")],["Home Renovation and Addition in Barrington",P("home-renovation-and-addition-in-barrington")]]},
+  {id:"character",q:"We love our older home's character, but it doesn't live like a modern home",u:"plan",
+   means:"Classic North Shore homes have millwork and proportions worth keeping, along with small rooms, tight kitchens and systems from another era.",
+   fix:"We update the plan and the systems together, opening walls only once and keeping the details that made you fall for the house.",
+   proj:[["Home Remodel and Addition in Winnetka",P("home-remodel-and-addition-in-winnetka")],["Chicago Poppy House Renovation",P("poppy-house-renovation")]]},
+  {id:"buying",q:"We're buying a home and want to make it ours",u:"plan",
+   means:"It's hard to judge a home's remodeling potential, or what it will take to get there, during a showing.",
+   fix:"BDS offers a 60-minute real estate consultation on site with Bryan before you buy, then designs and builds the changes once it's yours.",
+   proj:[["Whole Home Remodel and Addition in Libertyville",P("whole-home-remodel-and-addition-in-libertyville")],["BDS FAQs",SITE+"faqs"]]},
+  {id:"age",q:"We plan to stay here for the long run",u:"plan",
+   means:"Stairs to the only bedroom, tub-shower combinations and narrow doorways get harder over time.",
+   fix:"A first-floor primary suite, curbless showers and wider doorways, designed to look like any other beautiful room in the house.",
+   proj:[["New Primary Suite Home Addition in Libertyville",P("new-primary-suite-home-addition-in-libertyville")]]},
+  {id:"many",q:"We have a vision for the whole house and don't want to manage five contractors",u:"plan",
+   means:"Hiring separately for each room means more coordination, more disruption and finishes that don't feel connected.",
+   fix:"One design-build team plans the whole house, sets priorities and can phase the work around your family and budget.",
+   proj:[["Interior Remodel in Libertyville",P("interior-remodel-in-libertyville")],["Our design-build process",SITE+"our-process"]]}
+ ]}
+};
+const st={space:"bath",sel:new Set(["retreat","leak"])};
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function renderSpaces(){
+  $("spaces").innerHTML=Object.entries(SPACES).map(([k,s])=>`<label class="space"><input type="radio" name="space" id="sp-${k}" value="${k}" ${k===st.space?"checked":""}><span>${ICON[k]}${s.label}</span></label>`).join("");
+}
+function renderSymptoms(){
+  $("symptoms").innerHTML=SPACES[st.space].items.map(i=>`<label class="sym"><input type="checkbox" id="sy-${st.space}-${i.id}" value="${i.id}" ${st.sel.has(i.id)?"checked":""}><span>${esc(i.q)}</span></label>`).join("");
+}
+function renderResults(){
+  const sp=SPACES[st.space];
+  const picked=sp.items.filter(i=>st.sel.has(i.id)).sort((a,b)=>(a.u==="soon"?0:1)-(b.u==="soon"?0:1));
+  const soon=picked.filter(i=>i.u==="soon").length;
+  $("sumH").textContent= picked.length ? `Your ${sp.label.toLowerCase()}: ${picked.length} ${picked.length>1?"issues":"issue"}` : `Your ${sp.label.toLowerCase()}`;
+  $("sumP").textContent= picked.length ? (soon ? `${soon} should be looked at soon, before it causes more damage.` : "Nothing urgent. These are good to plan around.") : "";
+  $("dxList").innerHTML= picked.length ? picked.map(i=>`
+    <article class="dx">
+      <div class="dx-top"><h3>${esc(i.q)}</h3><span class="tag ${i.u}">${i.u==="soon"?"Look at soon":"Plan ahead"}</span></div>
+      <div class="dx-body"><div><b>What's usually behind it</b><p>${esc(i.means)}</p></div><div><b>How BDS fixes it</b><p>${esc(i.fix)}</p></div></div>
+      <div class="dx-proj"><small>See it solved</small>${i.proj.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div>
+    </article>`).join("") : `<div class="empty">Check what's bothering you in your ${sp.label.toLowerCase()} to see what's usually behind it.</div>`;
+  $("notes").value = picked.length ? `${sp.label}: ${picked.map(i=>i.q.toLowerCase()).join("; ")}.` : "";
+}
+$("pick").addEventListener("change",e=>{
+  const el=e.target;
+  if(el.name==="space"){ st.space=el.value; st.sel.clear(); renderSymptoms(); }
+  else if(el.type==="checkbox"){ el.checked?st.sel.add(el.value):st.sel.delete(el.value); }
+  renderResults();
+});
+$("lead").addEventListener("submit",e=>{
+  e.preventDefault();
+  const n=$("fname").value.trim(), m=$("email").value.trim();
+  const ok=n && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
+  $("err").hidden=ok; if(!ok) return;
+  $("lead").hidden=true; $("doneMsg").textContent=`Thanks, ${n}. BDS will be in touch to schedule a visit.`; $("done").hidden=false;
+});
+renderSpaces(); renderSymptoms(); renderResults();
+</script>
+
+</body>
+</html>
